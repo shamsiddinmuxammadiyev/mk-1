@@ -806,55 +806,19 @@ teachers_info_list = [
     }
 ]
 
-kanal = ['@Dehqonobod_Ixtisoslashtirilgan_M']
+kanal = ['@asdfghjkloiuytrewqpo']
 CHANNEL_USERNAME = kanal[0]
 
-TOKEN = "8216327788:AAHb7SRI6hef3iBQotP5NRJvQlMkcoLiEqc"
+TOKEN = os.environ.get("BOT_TOKEN")
+if not TOKEN:
+    raise RuntimeError("BOT_TOKEN environment variable topilmadi! Railway Variables bo'limiga BOT_TOKEN nomi bilan qo'shing.")
 bot = TeleBot(TOKEN)
-
-
-# ==========================
-# Obuna tekshirish
-# ==========================
-def obuna_tekshir():
-    jb = types.InlineKeyboardMarkup(row_width=1)
-    jb.add(types.InlineKeyboardButton(
-        "📢Kanalga obuna bo'lish.",
-        url=f"https://t.me/{kanal[0].lstrip('@')}"
-    ))
-    jb.add(types.InlineKeyboardButton("✅Obunani tekshirish", callback_data='check_sub'))
-    return jb
 
 
 @bot.message_handler(commands=['start'])
 def salomlash(message):
-    text = ("Assalomu alaykum!\n"
-            "Botdan foydalanish uchun kanalimizga obuna bo'ling:")
-    bot.send_message(message.chat.id, text, reply_markup=obuna_tekshir())
-
-
-@bot.callback_query_handler(func=lambda c: c.data == "check_sub")
-def obunani_aniqlash(call):
-    user_id = call.from_user.id
-    try:
-        member = bot.get_chat_member(CHANNEL_USERNAME, user_id)
-        if member.status in ("creator", "administrator", "member", "restricted"):
-            bot.answer_callback_query(call.id, "✅ Obuna tasdiqlandi!")
-            bot.send_message(
-                call.message.chat.id,
-                "🎉 Tabirkaymiz! Siz kanalga obuna bo'lgansiz.",
-                reply_markup=tugmalar(call.from_user.id)
-            )
-        else:
-            bot.answer_callback_query(call.id, "❌ Obuna topilmadi.")
-            bot.send_message(
-                call.message.chat.id,
-                "Siz kanalga obuna bo'lmagansiz! Iltimos, obuna bo'ling.",
-                reply_markup=obuna_tekshir()
-            )
-    except Exception as e:
-        bot.answer_callback_query(call.id, "Xato!")
-        bot.send_message(call.message.chat.id, f"Tekshirishda xatolik yuz berdi.\nXato: {e}")
+    text = "Assalomu alaykum! Botimizga xush kelibsiz."
+    bot.send_message(message.chat.id, text, reply_markup=tugmalar(message.from_user.id))
 
 
 # ==========================
